@@ -109,7 +109,7 @@ func main() {
 	}
 	var out io.Writer = os.Stdout
 	if *outputFileName != "" {
-		if file, err := os.Open(*outputFileName); err != nil {
+		if file, err := os.Create(*outputFileName); err != nil {
 			log.Fatalf("Unable to open output file %s: %v", *outputFileName, err)
 		} else {
 			defer file.Close()
