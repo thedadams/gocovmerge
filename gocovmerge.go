@@ -32,7 +32,7 @@ func mergeProfileBlock(p *cover.Profile, pb cover.ProfileBlock, startIndex int) 
 	}
 
 	i := 0
-	if sortFunc(i) != true {
+	if !sortFunc(i) {
 		i = sort.Search(len(p.Blocks)-startIndex, sortFunc)
 	}
 	i += startIndex
@@ -93,6 +93,7 @@ func dumpProfiles(profiles []*cover.Profile, out io.Writer) {
 }
 
 func main() {
+	outputFileName := flag.String("output", "", "File to write merged result, default to stdout")
 	flag.Parse()
 
 	var merged []*cover.Profile
@@ -106,6 +107,15 @@ func main() {
 			merged = addProfile(merged, p)
 		}
 	}
+	var out io.Writer = os.Stdout
+	if *outputFileName != "" {
+		if file, err := os.Open(*outputFileName); err != nil {
+			log.Fatalf("Unable to open output file %s: %v", *outputFileName, err)
+		} else {
+			defer file.Close()
+			out = file
+		}
+	}
 
-	dumpProfiles(merged, os.Stdout)
+	dumpProfiles(merged, out)
 }
